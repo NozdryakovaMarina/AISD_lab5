@@ -3,13 +3,19 @@
 #include <iostream>
 #include <stdexcept>
 #include <random>
-#include <functional>
 
 using namespace std;
 
 namespace hash_table {
-	template<typename T>
-	struct Node {
 
+	template<typename K, typename V>
+	class HashTable {
+	private:
+		struct Pair {
+			K key;
+			V val;
+			Pair() : key(K()), val(V()) {}
+			Pair(K k, V v) : key(k), val(v) {}
+		};
 	};
 }
