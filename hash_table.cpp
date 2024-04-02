@@ -26,29 +26,27 @@ namespace hash_table {
 			} 
 		};
 		vector<Pair<K, V>> _data;
-		size_t _size;
+		size_t _count;
 		size_t hash(K k) const {
-			return k % _size;
+			return k % _count;
 		}
 	public:
-		UnorderedMap(): _size(0) {
+		UnorderedMap(): _count(0) {
 			_data.resize(_default_size);
 		}
 
-		UnorderedMap(size_t size): _size(0) {
+		UnorderedMap(size_t size): _count(0) {
 			_data.resize(size); 
 		}
 
-		UnorderedMap(const UnorderedMap<K, V>& other) : _data(other._data), _size(other._size) {}
+		UnorderedMap(const UnorderedMap<K, V>& other) : _data(other._data), _count(other._count) {}
 
 		~UnorderedMap() = default;
-
-		size_t get_size() const { return _size; }
 
 		UnorderedMap<K, V>& operator=(const UnorderedMap<K, V>& other) {
 			if (this != other) {
 				_data = other._data;
-				_size = other._size;
+				_count = other._count;
 			}
 			return *this;
 		}
@@ -66,7 +64,7 @@ namespace hash_table {
 				_data[index].key = k;
 				_data[index].val = v;
 				_data[index].state = exist;
-				_size++;
+				_count++;
 			}
 			else {
 				size_t i = 1;
@@ -77,7 +75,7 @@ namespace hash_table {
 						_data[index].key = k;
 						_data[index].val = v;
 						_data[index].state = exist;
-						_size++;
+						_count++;
 					}
 					i++;
 				}
@@ -89,6 +87,18 @@ namespace hash_table {
 				if (c.val == v) return true;
 			}
 			return false;
+		}
+
+		size_t get_count() const { return _count; }
+
+		size_t size() const { return _data.size(); }
+
+		size_t count(K k) {
+			size_t cnt = 0;
+			for (auto& c : _data) {
+				if (hash(c.k) == hash(k)) cnt++;
+			}
+			return cnt;
 		}
 	};
 }
