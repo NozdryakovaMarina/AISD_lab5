@@ -6,4 +6,9 @@
 using namespace hash_table;
 using namespace std;
 
+TEST(UnorderedMapTest, HashTablePrint) {
+	UnorderedMap <char, int> a;
+	a.print();
+}
+
  
