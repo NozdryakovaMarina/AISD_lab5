@@ -25,10 +25,20 @@ namespace hash_table {
 					cout << "Key: " << key << " | Value: " << val << endl;
 			} 
 		};
+
 		vector<Pair<K, V>> _data;
 		size_t _count;
+		double loadFactor = 0.7;
+
 		size_t hash(K k) const {
-			return k % _count;
+			return k % _data.size();
+		}
+
+		void rehash() {
+				vector<Pair<K, V>> newData; 
+				newData.resize((int)(_data.size() * 2 + 1));
+				_data = newData;
+				for (auto& c : _data) insert(c.key, c.val);
 		}
 	public:
 		UnorderedMap(): _count(0) {
@@ -41,7 +51,14 @@ namespace hash_table {
 
 		UnorderedMap(const UnorderedMap<K, V>& other) : _data(other._data), _count(other._count) {}
 
-		~UnorderedMap() = default;
+		~UnorderedMap() {
+			clear();
+		}
+
+		void clear() {
+			_data.clear();
+			_count = 0;
+		}
 
 		UnorderedMap<K, V>& operator=(const UnorderedMap<K, V>& other) {
 			if (this != other) {
@@ -57,34 +74,64 @@ namespace hash_table {
 			}
 		}
 
-		void insert(K k, V v) {
-			if (contains(k)) return;
-			size_t index = hash(k);
-			if (_data[index].state != exist) {
-				_data[index].key = k;
-				_data[index].val = v;
-				_data[index].state = exist;
-				_count++;
-			}
+		V* search(K key) {
+			size_t index = hash(key); 
+			if (_data[index].key == key) return &_data[index].val;
 			else {
-				size_t i = 1;
-				while (_data[index].state == exist) {
+				int i = 1;
+				while (true) {
 					index = (index + i) % _data.size();
-					if (index == hash(k)) return;
-					if (_data[index].state != exist) {
-						_data[index].key = k;
-						_data[index].val = v;
-						_data[index].state = exist;
-						_count++;
-					}
+					if (index == hash(key)) return nullptr;
+					if (_data[index].key == key) return &_data[index].val;
 					i++;
 				}
+			} 
+		}
+
+		void insert(K key, V val) {
+			if (search(key) != nullptr) return;
+			size_t index = hash(key);
+			if (_data[index].state != exist) {
+				_data[index].key = key;
+				_data[index].val = val;
+				_data[index].state = exist;
+				_count++;
+				if (_count / _data.size() >= loadFactor) rehash(); 
+			}
+			else {
+				int i = 1;
+				while (_data[index].state != empty) {
+					index = (index + i) % _data.size();
+					if (index == hash(key)) return;
+					if (_data[index].state != exist) {
+						_data[index].key = key;
+						_data[index].val = val;
+						_data[index].state = exist;
+						_count++;
+						if (_count / _data.size() >= loadFactor) rehash();
+					}
+					i++;
+				} 
 			}
 		}
 
-		bool contains(V v) const {
+		void insert_or_assign(K key, V val) {
+			size_t index = hash(key);
+			if (search(key) != nullptr) return;
+			if (_data[index].state != exist) {
+				_data[index].state = exist;
+				_count++;
+				if (_count / _data.size() >= loadFactor) rehash();
+			}
+			_data[index].key = key;
+			_data[index].val = val; 
+		}
+
+		bool contains(V val) const {
 			for (auto& c : _data) {
-				if (c.val == v) return true;
+				if (c.state == exist) {
+					if (c.val == val) return true;
+				}
 			}
 			return false;
 		}
@@ -93,10 +140,10 @@ namespace hash_table {
 
 		size_t size() const { return _data.size(); }
 
-		size_t count(K k) {
+		size_t count(K key) {
 			size_t cnt = 0;
 			for (auto& c : _data) {
-				if (hash(c.k) == hash(k)) cnt++;
+				if (hash(c.key) == hash(key)) cnt++;
 			}
 			return cnt;
 		}
