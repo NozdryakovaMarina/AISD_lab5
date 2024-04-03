@@ -30,15 +30,15 @@ namespace hash_table {
 		size_t _count;
 		double loadFactor = 0.7;
 
-		size_t hash(K k) const {
-			return k % _data.size();
+		size_t hash(K key) const {
+			return key % _data.size();
 		}
 
 		void rehash() {
-				vector<Pair<K, V>> newData; 
-				newData.resize((int)(_data.size() * 2 + 1));
-				_data = newData;
-				for (auto& c : _data) insert(c.key, c.val);
+			vector<Pair<K, V>> newData;
+			newData.resize((int)(_data.size() * 2 + 1));
+			_data = newData;
+			for (auto& c : _data) insert(c.key, c.val);
 		}
 	public:
 		UnorderedMap(): _count(0) {
@@ -75,7 +75,7 @@ namespace hash_table {
 		}
 
 		V* search(K key) {
-			size_t index = hash(key); 
+			size_t index = hash(key);
 			if (_data[index].key == key) return &_data[index].val;
 			else {
 				int i = 1;
@@ -85,7 +85,7 @@ namespace hash_table {
 					if (_data[index].key == key) return &_data[index].val;
 					i++;
 				}
-			} 
+			}
 		}
 
 		void insert(K key, V val) {
@@ -96,7 +96,7 @@ namespace hash_table {
 				_data[index].val = val;
 				_data[index].state = exist;
 				_count++;
-				if (_count / _data.size() >= loadFactor) rehash(); 
+				if (_count / _data.size() >= loadFactor) rehash();
 			}
 			else {
 				int i = 1;
@@ -111,20 +111,14 @@ namespace hash_table {
 						if (_count / _data.size() >= loadFactor) rehash();
 					}
 					i++;
-				} 
+				}
 			}
 		}
 
 		void insert_or_assign(K key, V val) {
-			size_t index = hash(key);
-			if (search(key) != nullptr) return;
-			if (_data[index].state != exist) {
-				_data[index].state = exist;
-				_count++;
-				if (_count / _data.size() >= loadFactor) rehash();
-			}
-			_data[index].key = key;
-			_data[index].val = val; 
+			V* prev = search(key);
+			if (prev) *prev = val;
+			else insert(key, val);
 		}
 
 		bool contains(V val) const {

@@ -26,7 +26,7 @@ TEST(UnorderedMapTest, HashTableSearch) {
 }
 
 TEST(UnorderedMapTest, HashTableInsertOrAssign) {
-	UnorderedMap <char, int> a(3);
+	UnorderedMap <char, int> a;
 	a.insert('N', 15);
 	a.insert('M', 1);
 	a.print();
@@ -55,4 +55,3 @@ TEST(UnorderedMapTest, HashTableOperatorAssignments) {
 
 
 
- 
