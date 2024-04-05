@@ -6,12 +6,6 @@
 using namespace hash_table;
 using namespace std;
 
-TEST(UnorderedMapTest, HashTablePrint) {
-	UnorderedMap <char, int> a;
-	a.insert('N', 15);
-	a.print();
-}
-
 TEST(UnorderedMapTest, HashTableInsert) {
 	UnorderedMap <char, int> a;
 	a.insert('N', 15);
@@ -19,7 +13,7 @@ TEST(UnorderedMapTest, HashTableInsert) {
 }
 
 TEST(UnorderedMapTest, HashTableInsert2) {
-	UnorderedMap <int, int> a(100);
+	UnorderedMap <int, int> a(10);
 	a.insert(1, 15);
 	a.insert(1, 9);
 	a.print(); 
@@ -48,6 +42,7 @@ TEST(UnorderedMapTest, HashTableInsertOrAssign2) {
 	a.insert('M', 1);
 	a.print();
 	a.insert_or_assign('M', 14);
+	cout << "------------" << endl;
 	a.print();
 }
 
@@ -136,4 +131,13 @@ TEST(HashPearsonTest, CompareHash2) {
 	string a = "sunshine";
 	string b = "blossom";
 	EXPECT_FALSE(compareHashes(a, b));
+}
+
+TEST(UnorderedMapTest, HashTableCollision) {
+	UnorderedMap<int, int> a(10);
+	a.insert(1, 1);
+	a.insert(2, 148);
+	a.insert(41, 15);
+	a.insert(4, -5);
+	a.print();
 }
